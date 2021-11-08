@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "SilkyFowl",
+  "classifications": [ "AtCoder", "Code" ],
+  "identity": "AtCoderFs.Expecto",
+  "name": "AtCoderFs templates: AtCoderExpecto",
+  "shortName": "acctest",
+  "sourceName": "AtCoderExpecto",
+  "tags": {
+    "language": "F#",
+    "type": "project"
+  }
+}

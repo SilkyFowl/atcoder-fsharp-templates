@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "SilkyFowl",
+    "classifications": [ "AtCoder", "Paket" ],
+    "identity": "AtCoder.paket.dependencies",
+    "name": "AtCoderFs templates: paket.dependencies",
+    "shortName": "accpacket",
+    "tags": {
+      "language": "F#",
+      "type": "item"
+    }
+  }
