@@ -1,3 +1,3 @@
-# Atcoder templates for `F#`
+# Atcoder helper for `F#`
 
-Templates to use when Atcoder F#.
+Templates and Powershell module to use when Atcoder F#.

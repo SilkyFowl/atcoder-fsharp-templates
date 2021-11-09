@@ -30,10 +30,10 @@ CompanyName = 'Unknown'
 Copyright = '(c) SilkyFowl. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'Helper for Atcoder F#.'
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = ''
+# PowerShellVersion = '7.2'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -98,10 +98,10 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/SilkyFowl/atcoder-fsharp-templates/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/SilkyFowl/atcoder-fsharp-templates'
 
         # A URL to an icon representing this module.
         # IconUri = ''
