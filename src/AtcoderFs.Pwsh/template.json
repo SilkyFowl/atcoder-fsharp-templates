@@ -1,0 +1,8 @@
+{
+    "task": {
+        "program": [
+        ],
+        "submit": "Program.fs",
+        "testdir": "test"
+    }
+}
