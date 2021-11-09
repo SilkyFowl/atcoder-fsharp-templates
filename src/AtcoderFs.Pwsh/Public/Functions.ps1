@@ -148,6 +148,7 @@ function Update-FsTemplate {
     [CmdletBinding(SupportsShouldProcess)]
     param (
     )
+    dotnet new --install AtcoderFs.Templates
     $fsTemplatePath = "$(acc config-dir)/fs"
     if (Test-Path $fsTemplatePath) {
         Remove-Item $fsTemplatePath -Recurse -Confirm:$false -Force
