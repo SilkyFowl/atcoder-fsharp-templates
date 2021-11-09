@@ -10,6 +10,7 @@ function Get-AtCoderContestInfo {
 }
 
 function New-AtCoderContest {
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
         $contestId
@@ -30,7 +31,7 @@ function New-AtCoderContest {
         $fsprojPath = Resolve-Path "$($_.Name)/$($_.Name).fsproj"
         dotnet sln add $fsprojPath
     }
-    
+
     # init test
     dotnet new acctest -o "$($parent.Name).Tests"
     $testProjPath = Resolve-Path "$($parent.Name).Tests/$($parent.Name).Tests.fsproj"
@@ -38,16 +39,16 @@ function New-AtCoderContest {
     # add test ref
     $taskFolders | ForEach-Object {
         $fsprojPath = Resolve-Path "$($_.Name)/$($_.Name).fsproj"
-        
+
         dotnet add $testProjPath reference $fsprojPath
     }
-    New-TestCode (Get-AtCoderTasksInfo $contestId) | Add-Content "$(Split-Path $testProjPath)/Tests.fs" 
-    
+    New-TestCode (Get-AtCoderTasksInfo $contestId) -Confirm:$false | Add-Content "$(Split-Path $testProjPath)/Tests.fs"
+
     # init paket
     paket init
     dotnet new accpacket --force
     paket add Expecto --project $testProjPath
-    
+
     dotnet build
     Set-Location -
 }
@@ -72,6 +73,7 @@ function Get-AtCoderTasksInfo {
 }
 
 function New-TestCode {
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
         $info
@@ -103,12 +105,13 @@ function Test-AtCoder {
     } else {
         $proj = Get-Item $FolderPath/*.Tests/*.Tests.fsproj
         dotnet run --project $proj
-    }   
+    }
 }
 function Update-AtCoderDebugLanchInfo {
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         $FolderPath = $pwd,
-        $LanchJspnPath= "$($psEditor.Workspace.Path)/.vscode/launch.json"
+        $LanchJspnPath = "$($psEditor.Workspace.Path)/.vscode/launch.json"
     )
 
     $proj = Get-Item $FolderPath/*.Tests/bin/Debug/netcoreapp3.1/*.Tests.dll
@@ -142,6 +145,9 @@ function Submit-AtCoderTask {
 }
 
 function Update-FsTemplate {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+    )
     $fsTemplatePath = "$(acc config-dir)/fs"
     if (Test-Path $fsTemplatePath) {
         Remove-Item $fsTemplatePath -Recurse -Confirm:$false -Force

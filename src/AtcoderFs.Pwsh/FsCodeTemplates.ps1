@@ -18,7 +18,7 @@ $Script:TemplateTestListHeader = @'
 
 [<Tests>]
 let testAcc =
-    [ 
+    [
 '@
 
 $Script:TemplateTestListFooter = @'
