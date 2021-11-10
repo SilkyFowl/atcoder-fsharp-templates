@@ -33,9 +33,6 @@ function New-AtCoderContest {
     }
     New-TestCode (Get-AtCoderTasksInfo $contestId) -Confirm:$false | Add-Content "$(Split-Path $testProjPath)/Tests.fs"
 
-    # init paket
-    paket init
-    dotnet new accpacket --force
     paket add Expecto --project $testProjPath
 
     dotnet build
