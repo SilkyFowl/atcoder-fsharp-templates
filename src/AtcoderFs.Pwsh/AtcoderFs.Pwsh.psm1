@@ -2,10 +2,10 @@ using namespace System.Management.Automation.Language
 
 # check require tools
 try {
-    Get-Command acc,oj -ErrorAction Stop
+    Get-Command acc,oj,paket -ErrorAction Stop
 }
 catch {
-    throw 'require tools: acc,oj'
+    throw 'require tools: acc,oj,paket'
 }
 
 . $PSScriptRoot\FsCodeTemplates.ps1
