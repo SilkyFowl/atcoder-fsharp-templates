@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>0.1.0</PackageVersion>
+    <PackageVersion>0.1.1</PackageVersion>
     <PackageId>AtcoderFs.Templates</PackageId>
     <Title>AtcoderFs Templates</Title>
     <Authors>SilkyFowl</Authors>
