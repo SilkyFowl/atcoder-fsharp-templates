@@ -14,6 +14,7 @@ Describe "Get-DotnetToolClosure <PackageID>" -ForEach @(@{PackageID = 'paket' })
 
     Context "Installed in Local" {
         BeforeAll {
+            dotnet new tool-manifest
             dotnet tool install $PackageID
         }
         It "Return Closure" {
