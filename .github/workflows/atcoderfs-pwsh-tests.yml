@@ -38,6 +38,9 @@ jobs:
           include_paths: tests/AtcoderFs.Pwsh.Tests
           report_name: module_tests
           report_title: AtcoderFs.Pwsh Tests
+          coverage_paths: src/AtcoderFs.Pwsh
+          coverage_report_name: module_tests_coverage
+          coverage_report_title: AtcoderFs.Pwsh Tests CodeCoverage
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: dump test results
         shell: pwsh
