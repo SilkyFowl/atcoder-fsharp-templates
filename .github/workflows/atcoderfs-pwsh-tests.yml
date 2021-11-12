@@ -31,20 +31,27 @@ jobs:
           } else {
               Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
           }
-      - name: test module
-        id: test_module
-        uses: zyborg/pester-tests-report@v1
-        with:
-          include_paths: tests/AtcoderFs.Pwsh.Tests
-          report_name: module_tests
-          report_title: AtcoderFs.Pwsh Tests
-          coverage_paths: src/AtcoderFs.Pwsh
-          coverage_report_name: module_tests_coverage
-          coverage_report_title: AtcoderFs.Pwsh Tests CodeCoverage
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: dump test results
+      - name: Run Pester
         shell: pwsh
         run: |
-          Write-Host 'Total Tests Executed...:  ${{ steps.test_module.outputs.total_count }}'
-          Write-Host 'Total Tests PASSED.....:  ${{ steps.test_module.outputs.passed_count }}'
-          Write-Host 'Total Tests FAILED.....:  ${{ steps.test_module.outputs.failed_count }}'
+          $config = @{
+              Run          = @{
+                  Path = "tests/AtcoderFs.Pwsh.Tests"
+              }
+              TestResult   = @{
+                  Enabled = $true
+                  OutputPath = "testresults/AtcoderFs.Pwsh.Tests.xml"
+              }
+              CodeCoverage = @{
+                  Enabled = $true
+                  Path    = "src/AtcoderFs.Pwsh"
+                  OutputPath = "testresults/AtcoderFs.Pwsh.CodeCoverage.xml"
+              }
+          }
+          Invoke-Pester -Configuration $config
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: testresults
+          path: testresults
+    if: ${{ always() }}
