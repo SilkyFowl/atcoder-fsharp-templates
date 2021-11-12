@@ -1,4 +1,5 @@
 BeforeAll{
+    dotnet new tool-manifest
     dotnet tool install paket
 
     $PSCommandPath -creplace 'tests', 'src' -creplace '.Tests'
