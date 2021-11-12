@@ -1,13 +1,25 @@
-function Get-DotnetToolClosure {
-    [OutputType([scriptblock])]
+function Resolve-DotnetTool {
+    [OutputType([void])]
     param (
         [Parameter(Mandatory)]
         [string]$PackageID
     )
     $localToolMatching = dotnet tool list | Select-String "^$PackageID(?=\s)" -Quiet
     if ($localToolMatching) {
-        { Start-Process dotnet (@($PackageID) + $args) }.GetNewClosure()
-    } elseif (Get-Command $PackageID) {
-        { Start-Process $PackageID $args }.GetNewClosure()
+        # Create Function 
+        $null = New-Item -Force -Path function: -Name "script:$PackageID" -Value @"
+        [CmdletBinding()]
+        param(
+            [Parameter(Position=1, ValueFromRemainingArguments)]
+            [string[]]`$additionalArgs
+        )
+
+        @('dotnet', '$PackageID') + `$additionalArgs
+        | Join-String -Separator ' '
+        | Invoke-Expression
+"@
+    } else {
+        # Check command
+        $null = Get-Command $PackageID
     }
 }

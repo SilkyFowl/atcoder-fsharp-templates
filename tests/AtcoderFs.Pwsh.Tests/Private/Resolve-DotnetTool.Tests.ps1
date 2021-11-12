@@ -6,7 +6,7 @@ BeforeAll {
 Describe "Get-DotnetToolClosure <PackageID>" -ForEach @(@{PackageID = 'paket' }) {
     Context "No Installed" {
         It "Failed" {
-            Get-DotnetToolClosure $PackageID -ErrorVariable errors -ErrorAction SilentlyContinue
+            Resolve-DotnetTool $PackageID -ErrorVariable errors -ErrorAction SilentlyContinue
             $errors.Count | Should -Be 1
             $errors[0].Exception | Should -BeOfType System.Management.Automation.CommandNotFoundException
         }
@@ -17,10 +17,11 @@ Describe "Get-DotnetToolClosure <PackageID>" -ForEach @(@{PackageID = 'paket' })
             dotnet new tool-manifest
             dotnet tool install $PackageID
         }
-        It "Return Closure" {
-            $expected = { Start-Process dotnet (@($PackageID) + $args) }
+        It "Init Function" {
 
-            Get-DotnetToolClosure $PackageID | Should -BeLike $expected
+            Resolve-DotnetTool $PackageID  | Should -BeNullOrEmpty
+
+            (Get-Command $PackageID).CommandType | Should -Be 'Function'
         }
         AfterAll {
             dotnet tool uninstall $PackageID
@@ -31,10 +32,8 @@ Describe "Get-DotnetToolClosure <PackageID>" -ForEach @(@{PackageID = 'paket' })
         BeforeAll{
             dotnet tool install --global $PackageID
         }
-        It "Return Closure" {
-            $expected = { Start-Process $PackageID $args }
-        
-            Get-DotnetToolClosure $PackageID | Should -BeLike $expected
+        It "Return Nothing" {        
+            Resolve-DotnetTool $PackageID | Should -BeNullOrEmpty
         }
         AfterAll {
             dotnet tool uninstall --global $PackageID
