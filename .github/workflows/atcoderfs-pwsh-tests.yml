@@ -31,17 +31,17 @@ jobs:
           } else {
               Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
           }
-      - name: Perform a Pester test from the AtcoderFs.Pwsh.Tests.ps1 file
+      - name: test module
+        id: test_module
+        uses: zyborg/pester-tests-report@v1
+        with:
+          include_paths: tests/AtcoderFs.Pwsh.Tests
+          report_name: module_tests
+          report_title: AtcoderFs.Pwsh Tests
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: dump test results
         shell: pwsh
         run: |
-          $config = New-PesterConfiguration
-          $config.Run.Path = "tests/AtcoderFs.Pwsh.Tests"
-          $config.TestResult.Enabled = $true
-          $config.TestResult.OutputPath = "AtcoderFs.Pwsh.Tests.xml"
-          Invoke-Pester -Configuration $config
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: ubuntu-Unit-Tests
-          path: AtcoderFs.Pwsh.Tests.xml
-    if: ${{ always() }}
+          Write-Host 'Total Tests Executed...:  ${{ steps.test_module.outputs.total_count }}'
+          Write-Host 'Total Tests PASSED.....:  ${{ steps.test_module.outputs.passed_count }}'
+          Write-Host 'Total Tests FAILED.....:  ${{ steps.test_module.outputs.failed_count }}'
