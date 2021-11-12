@@ -35,7 +35,7 @@ jobs:
         shell: pwsh
         run: |
           $config = New-PesterConfiguration
-          $config.Run.Path = "tests/AtcoderFs.Pwsh.Tests/AtcoderFs.Pwsh.Tests.ps1"
+          $config.Run.Path = "tests/AtcoderFs.Pwsh.Tests"
           $config.TestResult.Enabled = $true
           $config.TestResult.OutputPath = "AtcoderFs.Pwsh.Tests.xml"
           Invoke-Pester -Configuration $config
