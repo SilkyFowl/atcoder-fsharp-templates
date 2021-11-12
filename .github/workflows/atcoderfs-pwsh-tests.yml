@@ -1,0 +1,88 @@
+name: Test PowerShell on Ubuntu
+on: push
+
+jobs:
+  pester-test:
+    name: Pester test
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup PowerShell module cache
+        id: cacher
+        uses: actions/cache@v2
+        with:
+          path: "~/.local/share/powershell/Modules"
+          key: ${{ runner.os }}-AngleParse-PSScriptAnalyzer
+      - name: Install required PowerShell modules
+        if: steps.cacher.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module AngleParse, PSScriptAnalyzer -ErrorAction Stop
+      - name: Lint with PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path src/AtcoderFs.Pwsh  -Recurse -Outvariable issues
+          $errors   = $issues.Where({$_.Severity -eq 'Error'})
+          $warnings = $issues.Where({$_.Severity -eq 'Warning'})
+          if ($errors) {
+              Write-Error "There were $($errors.Count) errors and $($warnings.Count) warnings total." -ErrorAction Stop
+          } else {
+              Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
+          }
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: npm install -g atcoder-cli
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.cache/pip
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install online-judge-tools
+      - name: Run Pester
+        shell: pwsh
+        run: |
+          $config = @{
+              Run          = @{
+                  Path = "tests/AtcoderFs.Pwsh.Tests"
+              }
+              TestResult   = @{
+                  Enabled = $true
+                  OutputPath = "testresults/AtcoderFs.Pwsh.Tests.xml"
+              }
+              CodeCoverage = @{
+                  Enabled = $true
+                  Path    = "src/AtcoderFs.Pwsh"
+                  OutputPath = "testresults/AtcoderFs.Pwsh.CodeCoverage.xml"
+              }
+          }
+          Invoke-Pester -Configuration $config
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: testresults
+          path: testresults
+    if: ${{ always() }}
