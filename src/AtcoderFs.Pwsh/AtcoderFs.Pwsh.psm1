@@ -1,8 +1,9 @@
 using namespace System.Management.Automation.Language
+using namespace System.Collections.Generic
 
 . $PSScriptRoot\FsCodeTemplates.ps1
 
-$exportFunctions = @()
+$exportFunctions = [List[string]]::new()
 
 Get-ChildItem $PSScriptRoot\Private\*.ps1
 | ForEach-Object {
@@ -11,7 +12,13 @@ Get-ChildItem $PSScriptRoot\Private\*.ps1
 Get-ChildItem $PSScriptRoot\Public\*.ps1
 | ForEach-Object {
     . $_.FullName
-    $exportFunctions += [scriptblock]::Create((Get-Content $_.FullName -Raw)).Ast.FindAll({ $args[0] -is [FunctionDefinitionAst] }, $false).Name
+    [Parser]::ParseFile(
+        $_.FullName, [ref]$null, [ref]$null
+    ).FindAll(
+        { $args[0] -is [FunctionDefinitionAst] }, $false
+    ).ForEach{
+        $exportFunctions.Add($_.Name)
+    }
 }
 
 # check require tools
